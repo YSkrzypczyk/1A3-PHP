@@ -1,8 +1,24 @@
-<?php include "template/header.php" ?>
+<?php
+		session_start();
+ 		include "template/header.php"; 
+?>
 
 
 <div class="container">
 <h1>S'inscrire</h1>
+
+<?php 
+if( isset($_SESSION['errors'])) {
+	$listOfErrors = unserialize($_SESSION['errors']);
+	echo '<div class="alert alert-danger" role="alert">';
+	foreach( $listOfErrors as $error){
+			echo "<li>".$error;
+	}
+	echo "</div>";
+	unset($_SESSION['errors']);
+}
+?>
+
 
 <form action="core/userAdd.php" method="POST">
 

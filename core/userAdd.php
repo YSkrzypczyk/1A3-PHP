@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require "functions.php";
 
 //Objectif : Insertion du user en BDD
@@ -11,7 +11,7 @@ require "functions.php";
 //-> créée et alimentée par le serveur
 //-> toujours des tableaux
 
-print_r($_POST);
+//print_r($_POST);
 //Array ( [gender] => 0 [firstname] => Yves [lastname] => Skrzypczyk [email] => y.skrzypczyk@gmail.com [pwd] => gfdgfd [pwdConfirm] => gfdfgd [birthday] => 1986-11-29 [country] => fr [cgu] => on )
 
 
@@ -61,8 +61,11 @@ if( strlen($lastname) < 2 ){
 }
 //Email -> Bon format
 if( !filter_var($email, FILTER_VALIDATE_EMAIL)){
-	$listOfErrors[]="L'email est incorrect'";
+	$listOfErrors[]="L'email est incorrect";
 }
+//Unicité de l'email
+
+
 
 //Country -> fr ou pl
 $listOfCountries = ['fr','pl'];
@@ -71,22 +74,31 @@ if( !in_array($country, $listOfCountries) ){
 }
 
 //pwd -> 8 caractères avec min maj et chiffre
-if(strlen($pwd) < 8 || 
-	!preg_match("#[a-z]#", $pwd) || 
-	!preg_match("#[A-Z]#", $pwd) || 
-	!preg_match("#[0-9]#", $pwd)
+if(strlen($pwd) < 8 || !preg_match("#[a-z]#", $pwd) || !preg_match("#[A-Z]#", $pwd) || !preg_match("#[0-9]#", $pwd)
 
 ){
 
 	$listOfErrors[]="Votre mot de passe doit faire au minimum 8 caractères avec minuscules, majuscules et chiffres.";
 }
 
-
-
 //pwdConfirm -> = pwd
+if ($_POST["pwdConfirm"] != $_POST['pwd']) {
+
+	$listOfErrors[]="Mot de passe de confirmation incorrect";
+}
 
 
 //Birthday -> entre 13 et 90
+//la date est valide ? 1986-11-29
+$dateExploded = explode("-", $_POST["birthday"]);
+if ( !checkdate($dateExploded[1], $dateExploded[2], $dateExploded[0]) ){
+		$listOfErrors[] = "Date de naissance incorrecte";
+}
+$birthSecond = strtotime($_POST["birthday"]);
+$age = (time()-$birthSecond)/3600/24/365.25; 
+if ( $age < 13 || $age > 90){
+		$listOfErrors[] = "Vous devez avoir entre 13 et 90 ans";
+}
 
 
 
@@ -97,4 +109,6 @@ if( empty($listOfErrors) ){
 }else{
 	//SI NOK
 	// --> Redirection sur le register avec les messages d'erreurs
+	$_SESSION["errors"] = serialize($listOfErrors);
+	header("Location: ../register.php");
 }
