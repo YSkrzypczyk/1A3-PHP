@@ -74,7 +74,7 @@ if( !in_array($country, $listOfCountries) ){
 }
 
 //pwd -> 8 caractères avec min maj et chiffre
-if(strlen($pwd) < 8 || !preg_match("#[a-z]#", $pwd) || !preg_match("#[A-Z]#", $pwd) || !preg_match("#[0-9]#", $pwd)
+if( strlen($pwd) < 8 || !preg_match("#[a-z]#", $pwd) || !preg_match("#[A-Z]#", $pwd) || !preg_match("#[0-9]#", $pwd)
 
 ){
 
@@ -93,13 +93,15 @@ if ($_POST["pwdConfirm"] != $_POST['pwd']) {
 $dateExploded = explode("-", $_POST["birthday"]);
 if ( !checkdate($dateExploded[1], $dateExploded[2], $dateExploded[0]) ){
 		$listOfErrors[] = "Date de naissance incorrecte";
-}
-$birthSecond = strtotime($_POST["birthday"]);
-$age = (time()-$birthSecond)/3600/24/365.25; 
-if ( $age < 13 || $age > 90){
-		$listOfErrors[] = "Vous devez avoir entre 13 et 90 ans";
-}
+} else {
 
+	$birthSecond = strtotime($_POST["birthday"]);
+	$age = (time()-$birthSecond)/3600/24/365.25; 
+	if ( $age < 13 || $age > 90){
+			$listOfErrors[] = "Vous devez avoir entre 13 et 90 ans";
+	}
+
+}
 
 
 if( empty($listOfErrors) ){  
