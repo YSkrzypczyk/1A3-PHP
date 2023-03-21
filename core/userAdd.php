@@ -105,9 +105,37 @@ if ( !checkdate($dateExploded[1], $dateExploded[2], $dateExploded[0]) ){
 
 
 if( empty($listOfErrors) ){  
+
 	//SI OK
-	// --> Connexion et Insertion en BDD
-	// --> Redirection sur le login
+
+	//Se connecter à la BDD
+	try{
+		$connection = new PDO("mysql:host=localhost;dbname=projet_web;port=3306","root","");
+	}catch(Exception $e){
+		//Si on arrive pas à se connecter alors on fait un die avec erreur SQL
+		die("Erreur SQL ".$e->getMessage() );
+	}
+
+	//Requete SQL pour inserer un nouvel utilisateur
+	$queryPrepared = $connection->prepare("INSERT INTO skrzypczyk_user 
+			(firstname, lastname, email, gender, country, birthday, pwd) 
+	VALUES (:firstname, :lastname, :email, :gender, :country, :birthday, :pwd )");
+
+	//Executer cette requete
+	$queryPrepared->execute([
+		"firstname"=>$firstname,
+		"lastname"=>$lastname,
+		"email"=>$email,
+		"gender"=>$gender,
+		"country"=>$country,
+		"birthday"=>$birthday,
+		"pwd"=>password_hash($pwd, PASSWORD_DEFAULT),
+	]);
+
+	//Redirection sur la page de login
+	header("Location: ../login.php");
+
+
 }else{
 	//SI NOK
 	// --> Redirection sur le register avec les messages d'erreurs
