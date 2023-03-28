@@ -1,5 +1,6 @@
 <?php
 session_start();
+require "const.php";
 require "functions.php";
 
 //Objectif : Insertion du user en BDD
@@ -59,12 +60,22 @@ if( strlen($firstname) < 2 ){
 if( strlen($lastname) < 2 ){
 	$listOfErrors[]="Le nom doit faire plus de 2 caractères";
 }
+
+
 //Email -> Bon format
 if( !filter_var($email, FILTER_VALIDATE_EMAIL)){
 	$listOfErrors[]="L'email est incorrect";
+}else{
+	//Unicité de l'email
+	$connection = connectDB();
+	//Donne moi l'utilisateur dans la table skrzypczyk_user qui a pour email $email
+	$queryPrepared = $connection->prepare("SELECT id FROM ".PRE_DB."user WHERE email=:email");
+	$queryPrepared->execute(["email"=>$email]);
+	$result = $queryPrepared->fetch();
+	if(!empty($result)){
+		$listOfErrors[]="L'email est déjà utilisé";
+	}
 }
-//Unicité de l'email
-
 
 
 //Country -> fr ou pl
@@ -108,16 +119,9 @@ if( empty($listOfErrors) ){
 
 	//SI OK
 
-	//Se connecter à la BDD
-	try{
-		$connection = new PDO("mysql:host=localhost;dbname=projet_web;port=3306","root","");
-	}catch(Exception $e){
-		//Si on arrive pas à se connecter alors on fait un die avec erreur SQL
-		die("Erreur SQL ".$e->getMessage() );
-	}
-
+	
 	//Requete SQL pour inserer un nouvel utilisateur
-	$queryPrepared = $connection->prepare("INSERT INTO skrzypczyk_user 
+	$queryPrepared = $connection->prepare("INSERT INTO ".PRE_DB."user 
 			(firstname, lastname, email, gender, country, birthday, pwd) 
 	VALUES (:firstname, :lastname, :email, :gender, :country, :birthday, :pwd )");
 
