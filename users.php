@@ -5,6 +5,9 @@
 	include "template/header.php"; 
 
 	redirectIfNotConnected();
+
+	
+
 ?>
 
 

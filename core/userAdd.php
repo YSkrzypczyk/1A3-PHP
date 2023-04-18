@@ -17,7 +17,7 @@ require "functions.php";
 
 
 //Vérification macro : nb (9) + le nom des champs
-if( count($_POST)!= 9 ||
+if( count($_POST)!= 10 ||
 	!isset($_POST["gender"]) ||
 	empty($_POST["firstname"]) ||
 	empty($_POST["lastname"]) ||
@@ -26,7 +26,8 @@ if( count($_POST)!= 9 ||
 	empty($_POST["pwdConfirm"]) ||
 	empty($_POST["birthday"]) ||
 	empty($_POST["country"]) ||
-	empty($_POST["cgu"])	
+	empty($_POST["cgu"])	||
+	empty($_POST["captcha"])	
 
 ){
 	die("Tentative de HACK !!!");
@@ -43,6 +44,7 @@ $country = $_POST["country"];
 $birthday = $_POST["birthday"];
 $pwd = $_POST["pwd"];
 $pwdConfirm = $_POST["pwdConfirm"];
+$captcha = $_POST["captcha"];
 
 
 $listOfErrors = [];
@@ -114,6 +116,10 @@ if ( !checkdate($dateExploded[1], $dateExploded[2], $dateExploded[0]) ){
 
 }
 
+if($captcha != $_SESSION['captcha']){
+			$listOfErrors[] = "Le captcha est incorrect";
+}
+
 
 if( empty($listOfErrors) ){  
 
@@ -143,6 +149,6 @@ if( empty($listOfErrors) ){
 }else{
 	//SI NOK
 	// --> Redirection sur le register avec les messages d'erreurs
-	$_SESSION["errors"] = serialize($listOfErrors);
+	$_SESSION["errors"] = $listOfErrors;
 	header("Location: ../register.php");
 }

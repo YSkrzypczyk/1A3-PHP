@@ -11,7 +11,7 @@
 
 <?php 
 if( isset($_SESSION['errors'])) {
-	$listOfErrors = unserialize($_SESSION['errors']);
+	$listOfErrors = $_SESSION['errors'];
 	echo '<div class="alert alert-danger" role="alert">';
 	foreach( $listOfErrors as $error){
 			echo "<li>".$error;
@@ -77,6 +77,11 @@ if( isset($_SESSION['errors'])) {
     		<option value="fr">France</option>
     		<option value="pl">Pologne</option>
     	</select>
+	</div>
+
+	<div class="mb-3">
+		<img src="captcha.php">
+		<input type="text" name="captcha" required="required" placeholder="captcha">
 	</div>
 
 
