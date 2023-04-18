@@ -1,6 +1,9 @@
-<?php require "core/functions.php";?>
-
-<?php include "template/header.php"; ?>
+<?php
+	session_start();
+	require "core/const.php";
+	require "core/functions.php";
+	include "template/header.php"; 
+?>
 
 
 <div class="container">

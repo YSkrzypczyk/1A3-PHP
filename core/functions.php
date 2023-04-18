@@ -41,7 +41,7 @@ function isConnected(){
 		$queryPrepared = $connect->prepare("SELECT id from skrzypczyk_user WHERE email=:email");
 		$queryPrepared->execute(["email"=>$_SESSION['email']]);
 		$result = $queryPrepared->fetch();
-
+		
 		if(!empty($result )){
 			return true;
 		}
@@ -51,7 +51,7 @@ function isConnected(){
 }
 
 function redirectIfNotConnected(){
-	if(!isConnected){
+	if(!isConnected()){
 		header("Location: login.php");
 	}
 }
