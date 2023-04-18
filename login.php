@@ -1,5 +1,7 @@
 <?php
 		session_start();
+		require "core/const.php";
+ 		require "core/functions.php";	
  		include "template/header.php"; 
 ?>
 
@@ -20,7 +22,39 @@ Consigne du TP
 	----> login = 1
 	- redirection sur la page index.php
 */
+
+	if( !empty($_POST['email']) &&  !empty($_POST['pwd']) ){
+
+		$email = cleanEmail($_POST['email']);
+		$pwd  = $_POST['pwd'];
+
+		$connect = connectDB();
+		$queryPrepared = $connect->prepare("SELECT pwd FROM skrzypczyk_user WHERE email=:email");
+		$queryPrepared->execute(["email"=>$email]);
+
+		$result = $queryPrepared->fetch();
+
+		if( !empty($result) && password_verify($pwd, $result["pwd"])){
+			$_SESSION['email'] = $email;
+			$_SESSION['login'] = 1;
+			header("Location: index.php");
+		}else{
+			echo "Identifiants incorrects";
+		}
+
+
+
+	}
+
+
 ?>
+
+
+<form action="login.php" method="POST">
+	<input type="email" name="email" placeholder="email" required="required">
+	<input type="password" name="pwd" placeholder="votre mot de passe" required="required">
+	<button>Se connecter</button>
+</form>
 
 
 <?php include "template/footer.php" ?>
